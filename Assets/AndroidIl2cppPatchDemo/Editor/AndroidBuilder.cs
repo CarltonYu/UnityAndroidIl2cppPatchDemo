@@ -17,18 +17,18 @@ public class AndroidBuilder : MonoBehaviour {
     //-----------------------------------------------------------------------------------
     public static readonly string PROJECT_DIR = Application.dataPath.Substring(0, Application.dataPath.Length - 6);
     public static readonly string ANDROID_EXPORT_PATH = PROJECT_DIR + "/AndroidGradleProject_v1.0";
-    public static string ANDROID_PROJECT_PATH { get { return ANDROID_EXPORT_PATH + "/" + PlayerSettings.productName; } }
-    public static string ANDROID_MANIFEST_PATH = ANDROID_PROJECT_PATH + "/src/main/";
-    public static string JAVA_SRC_PATH = ANDROID_PROJECT_PATH + "/src/main/java/";
+    public static string ANDROID_PROJECT_PATH { get { return ANDROID_EXPORT_PATH; } }
+    public static string ANDROID_MANIFEST_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/";
+    public static string JAVA_SRC_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/java/";
     public static string JAR_LIB_PATH = ANDROID_PROJECT_PATH + "/libs/";
     public static string SO_DIR_NAME = "jniLibs";
-    public static string SO_LIB_PATH = ANDROID_PROJECT_PATH + "/src/main/jniLibs/";
-    public static string EXPORTED_ASSETS_PATH = ANDROID_PROJECT_PATH + "/src/main/assets";
-    public static string R_JAVA_PATH = ANDROID_PROJECT_PATH + "/src/main/gen/";
-    public static string RES_PATH = ANDROID_PROJECT_PATH + "/src/main/res";
-    public static string MANIFEST_XML_PATH = ANDROID_PROJECT_PATH + "/src/main/AndroidManifest.xml";
-    public static string JAVA_OBJ_PATH = ANDROID_PROJECT_PATH + "/src/main/objs/";
-    public static string BUILD_SCRIPTS_PATH = ANDROID_PROJECT_PATH + "/src/main/";
+    public static string SO_LIB_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/jniLibs/";
+    public static string EXPORTED_ASSETS_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/assets";
+    public static string R_JAVA_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/gen/";
+    public static string RES_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/res";
+    public static string MANIFEST_XML_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/AndroidManifest.xml";
+    public static string JAVA_OBJ_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/objs/";
+    public static string BUILD_SCRIPTS_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/";
     public static string ZIP_PATH = PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/Editor/Exe/zip.exe";
 
     static bool Exec(string filename, string args)
