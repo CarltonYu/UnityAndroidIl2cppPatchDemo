@@ -20,7 +20,7 @@ public class AndroidBuilder : MonoBehaviour {
     public static string ANDROID_PROJECT_PATH { get { return ANDROID_EXPORT_PATH; } }
     public static string ANDROID_MANIFEST_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/";
     public static string JAVA_SRC_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/java/";
-    public static string JAR_LIB_PATH = ANDROID_PROJECT_PATH + "/libs/";
+    public static string JAR_LIB_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/libs/";
     public static string SO_DIR_NAME = "jniLibs";
     public static string SO_LIB_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/jniLibs/";
     public static string EXPORTED_ASSETS_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/assets";
@@ -309,13 +309,13 @@ import io.github.noodle1983.Boostrap;");
         if (Directory.Exists(outputLibPath)) { FileUtil.DeleteFileOrDirectory(outputLibPath); }
         Directory.CreateDirectory(outputLibPath);
         FileUtil.ReplaceDirectory(SO_LIB_PATH + "/armeabi-v7a", outputLibPath + "/armeabi-v7a");
-        FileUtil.ReplaceDirectory(SO_LIB_PATH + "/x86", outputLibPath + "/x86");
+        // FileUtil.ReplaceDirectory(SO_LIB_PATH + "/x86", outputLibPath + "/x86");
 #if UNITY_2018 || UNITY_2019
         FileUtil.ReplaceDirectory(SO_LIB_PATH + "/arm64-v8a", outputLibPath + "/arm64-v8a");
         FileUtil.DeleteFileOrDirectory(outputLibPath + "/arm64-v8a/Data");
 #endif
         FileUtil.DeleteFileOrDirectory(outputLibPath + "/armeabi-v7a/Data");
-        FileUtil.DeleteFileOrDirectory(outputLibPath + "/x86/Data");
+        // FileUtil.DeleteFileOrDirectory(outputLibPath + "/x86/Data");
         var debug_files = Directory.GetFiles(outputLibPath, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".debug") || s.EndsWith(".map") || s.EndsWith(".sym"));
         foreach (string file in debug_files) { File.Delete(file); }
 
