@@ -30,6 +30,6 @@ UnityConnectSettings:
     m_AndroidGameId: 3228535
     m_GameIds:
       AndroidPlayer: 3228535
-    m_GameId: 
+    m_GameId: 3228535
   PerformanceReportingSettings:
     m_Enabled: 0

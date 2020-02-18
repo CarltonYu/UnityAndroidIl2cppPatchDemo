@@ -11,8 +11,8 @@ public class AndroidBuilder : MonoBehaviour {
 
     //-----------------------------------------  config ---------------------------------
     //set SDK/NDK/JDK via Unity Menu Path: Edit -> Preferences... -> External Tools -> Android
-    public static readonly string ANDROID_BUILD_TOOLS_VERSION = "26.0.2";
-    public static readonly string ANDROID_PLATFORM = "android-23";
+    public static readonly string ANDROID_BUILD_TOOLS_VERSION = "28.0.3";
+    public static readonly string ANDROID_PLATFORM = "android-28";
 
     //-----------------------------------------------------------------------------------
     public static readonly string PROJECT_DIR = Application.dataPath.Substring(0, Application.dataPath.Length - 6);
@@ -132,7 +132,7 @@ public class AndroidBuilder : MonoBehaviour {
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
         PlayerSettings.stripEngineCode = false;
 #if UNITY_2018 || UNITY_2019
-        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARMv7 | AndroidArchitecture.X86 | AndroidArchitecture.ARM64;
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.All;
 #endif
 
         //export project
@@ -214,7 +214,7 @@ import io.github.noodle1983.Boostrap;");
         {
                 // path_in_android_project, filename inside zip, zip file anme
                 new string[3]{ "/"+ SO_DIR_NAME + "/armeabi-v7a/libil2cpp.so", "libil2cpp.so.new", "lib_armeabi-v7a_libil2cpp.so.zip" },
-                new string[3]{ "/"+ SO_DIR_NAME + "/x86/libil2cpp.so", "libil2cpp.so.new", "lib_x86_libil2cpp.so.zip" },
+                // new string[3]{ "/"+ SO_DIR_NAME + "/x86/libil2cpp.so", "libil2cpp.so.new", "lib_x86_libil2cpp.so.zip" },
 #if UNITY_2018 || UNITY_2019              
                 new string[3]{ "/"+ SO_DIR_NAME + "/arm64-v8a/libil2cpp.so", "libil2cpp.so.new", "lib_arm64-v8a_libil2cpp.so.zip" },
 #endif
