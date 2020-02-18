@@ -14,7 +14,7 @@ public class StatRecordUIMgr : MonoBehaviour
     void Start()
     {
         statRecoredUIList.Add(templateUI);
-        StartCoroutine(SupportPhoneStat.FetchSupportedStat(OnGotRecordData));
+        // StartCoroutine(SupportPhoneStat.FetchSupportedStat(OnGotRecordData));
         RefreshUI();
         
     }
