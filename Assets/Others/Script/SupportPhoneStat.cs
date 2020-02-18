@@ -23,7 +23,7 @@ public class StatRsp
 
 public class SupportPhoneStat : MonoBehaviour
 {
-    static readonly string HOST = "http://unitypatchdemo.noodle1983.cn";
+    // static readonly string HOST = "http://unitypatchdemo.noodle1983.cn";
     static SupportPhoneStat instance;
 
     public delegate void OnResponse(StatRsp rsp);
@@ -32,40 +32,40 @@ public class SupportPhoneStat : MonoBehaviour
     void Start()
     {
         instance = this;
-        StartCoroutine(ReportEnterScene());      
+        // StartCoroutine(ReportEnterScene());      
     }
 
-    IEnumerator ReportEnterScene() 
-    {
-        string phoneId = SystemInfo.deviceUniqueIdentifier;
-        string phoneType = SystemInfo.deviceModel;
-        string androidVersion = SystemInfo.operatingSystem;
-        int sceneNumber = 1;
-        int appVersion = 1;
-        int random = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
+    // IEnumerator ReportEnterScene() 
+    // {
+    //     string phoneId = SystemInfo.deviceUniqueIdentifier;
+    //     string phoneType = SystemInfo.deviceModel;
+    //     string androidVersion = SystemInfo.operatingSystem;
+    //     int sceneNumber = 1;
+    //     int appVersion = 1;
+    //     int random = UnityEngine.Random.Range(int.MinValue, int.MaxValue);
 
-        string url = HOST + "/index.php/PatchRecord/login?";
-        string param = "phone_id=" + Uri.EscapeDataString(phoneId)
-             + "&phone_type=" + Uri.EscapeDataString(phoneType)
-             + "&android_version=" + Uri.EscapeDataString(androidVersion)
-             + "&enter_scene=" + sceneNumber
-             + "&app_version=" + appVersion 
-             + "&rand=" + random;
-        string req = url + param;
+    //     string url = HOST + "/index.php/PatchRecord/login?";
+    //     string param = "phone_id=" + Uri.EscapeDataString(phoneId)
+    //          + "&phone_type=" + Uri.EscapeDataString(phoneType)
+    //          + "&android_version=" + Uri.EscapeDataString(androidVersion)
+    //          + "&enter_scene=" + sceneNumber
+    //          + "&app_version=" + appVersion 
+    //          + "&rand=" + random;
+    //     string req = url + param;
 
-        UnityWebRequest www = UnityWebRequest.Get(req);
-        yield return www.SendWebRequest();
+    //     UnityWebRequest www = UnityWebRequest.Get(req);
+    //     yield return www.SendWebRequest();
 
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            Debug.Log(www.downloadHandler.text);
-        }
-        //GetSupportedStat((rsp) => { if (rsp != null) { Debug.Log(JsonConvert.SerializeObject(rsp)); } });
-    }
+    //     if (www.isNetworkError || www.isHttpError)
+    //     {
+    //         Debug.Log(www.error);
+    //     }
+    //     else
+    //     {
+    //         Debug.Log(www.downloadHandler.text);
+    //     }
+    //     //GetSupportedStat((rsp) => { if (rsp != null) { Debug.Log(JsonConvert.SerializeObject(rsp)); } });
+    // }
 
     public static void GetSupportedStat(OnResponse onRsp)
     {
@@ -74,24 +74,24 @@ public class SupportPhoneStat : MonoBehaviour
             Debug.LogError("SupportPhoneStat instance = null");
             onRsp(null); return; 
         }
-        instance.StartCoroutine(FetchSupportedStat(onRsp)); 
+        // instance.StartCoroutine(FetchSupportedStat(onRsp)); 
     }
 
-    public static IEnumerator FetchSupportedStat(OnResponse onRsp)
-    {
-        string req = HOST + "/index.php/PatchRecord/dump_stat";
-        UnityWebRequest www = UnityWebRequest.Get(req);
-        yield return www.SendWebRequest();
+    // public static IEnumerator FetchSupportedStat(OnResponse onRsp)
+    // {
+    //     string req = HOST + "/index.php/PatchRecord/dump_stat";
+    //     UnityWebRequest www = UnityWebRequest.Get(req);
+    //     yield return www.SendWebRequest();
 
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.Log(www.error);
-            onRsp(null);
-            yield break;
-        }
+    //     if (www.isNetworkError || www.isHttpError)
+    //     {
+    //         Debug.Log(www.error);
+    //         onRsp(null);
+    //         yield break;
+    //     }
 
-        Debug.Log(www.downloadHandler.text);
-        StatRsp rsp = JsonConvert.DeserializeObject<StatRsp>(www.downloadHandler.text);
-        onRsp(rsp);
-    }
+    //     Debug.Log(www.downloadHandler.text);
+    //     StatRsp rsp = JsonConvert.DeserializeObject<StatRsp>(www.downloadHandler.text);
+    //     onRsp(rsp);
+    // }
 }
