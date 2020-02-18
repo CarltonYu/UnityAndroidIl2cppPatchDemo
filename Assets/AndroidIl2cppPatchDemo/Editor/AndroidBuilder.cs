@@ -71,21 +71,22 @@ public class AndroidBuilder : MonoBehaviour {
     
     public static bool ValidateConfig()
     {
-        string sdkPath = EditorPrefs.GetString("AndroidSdkRoot", "");
+        
+        string sdkPath = Path.GetFullPath("D:\\AndroidEnv\\SDK");//EditorPrefs.GetString("AndroidSdkRoot", "");
         if (string.IsNullOrEmpty(sdkPath))
         {
             Debug.LogError("sdk path is empty! please config via menu path:Edit/Preference->External tools.");
             return false;
         }
 
-        string jdkPath = EditorPrefs.GetString("JdkPath", "");
+        string jdkPath = Path.GetFullPath("D:\\AndroidEnv\\OpenJDK");//EditorPrefs.GetString("JdkPath", "");
         if (string.IsNullOrEmpty(jdkPath))
         {
             Debug.LogError("jdk path is empty! please config via menu path:Edit/Preference->External tools.");
             return false;
         }
 
-        string ndkPath = EditorPrefs.GetString("AndroidNdkRootR16b", "");
+        string ndkPath = Path.GetFullPath("D:\\AndroidEnv\\NDK\\android-ndk-r19");//EditorPrefs.GetString("AndroidNdkRootR16b", "");
         if (string.IsNullOrEmpty(ndkPath))
         {
             ndkPath = EditorPrefs.GetString("AndroidNdkRoot", "");
