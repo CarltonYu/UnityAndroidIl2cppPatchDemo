@@ -11,8 +11,8 @@ public class AndroidBuilder : MonoBehaviour {
 
     //-----------------------------------------  config ---------------------------------
     //set SDK/NDK/JDK via Unity Menu Path: Edit -> Preferences... -> External Tools -> Android
-    public static readonly string ANDROID_BUILD_TOOLS_VERSION = "28.0.3";
-    public static readonly string ANDROID_PLATFORM = "android-28";
+    public static readonly string ANDROID_BUILD_TOOLS_VERSION = "29.0.2";
+    public static readonly string ANDROID_PLATFORM = "android-29";
 
     //-----------------------------------------------------------------------------------
     public static readonly string PROJECT_DIR = Application.dataPath.Substring(0, Application.dataPath.Length - 6);
@@ -20,7 +20,8 @@ public class AndroidBuilder : MonoBehaviour {
     public static string ANDROID_PROJECT_PATH { get { return ANDROID_EXPORT_PATH; } }
     public static string ANDROID_MANIFEST_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/";
     public static string JAVA_SRC_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/java/";
-    public static string JAR_LIB_PATH = ANDROID_PROJECT_PATH + "/libs/";
+    public static string JAR_LIB_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/libs/";
+
     public static string SO_DIR_NAME = "jniLibs";
     public static string SO_LIB_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/jniLibs/";
     public static string EXPORTED_ASSETS_PATH = ANDROID_PROJECT_PATH + "/unityLibrary/src/main/assets";
@@ -71,52 +72,101 @@ public class AndroidBuilder : MonoBehaviour {
     
     public static bool ValidateConfig()
     {
-        
-        string sdkPath = Path.GetFullPath("D:\\AndroidEnv\\SDK");//EditorPrefs.GetString("AndroidSdkRoot", "");
-        if (string.IsNullOrEmpty(sdkPath))
-        {
-            Debug.LogError("sdk path is empty! please config via menu path:Edit/Preference->External tools.");
-            return false;
-        }
-
-        string jdkPath = Path.GetFullPath("D:\\AndroidEnv\\OpenJDK");//EditorPrefs.GetString("JdkPath", "");
-        if (string.IsNullOrEmpty(jdkPath))
-        {
-            Debug.LogError("jdk path is empty! please config via menu path:Edit/Preference->External tools.");
-            return false;
-        }
-
-        string ndkPath = Path.GetFullPath("D:\\AndroidEnv\\NDK\\android-ndk-r19");//EditorPrefs.GetString("AndroidNdkRootR16b", "");
-        if (string.IsNullOrEmpty(ndkPath))
-        {
-            ndkPath = EditorPrefs.GetString("AndroidNdkRoot", "");
-            if (string.IsNullOrEmpty(ndkPath))
+        if(Application.platform == RuntimePlatform.OSXEditor){
+            string sdkPath = Path.GetFullPath("/Users/carltonyu/Library/Android/sdk");//EditorPrefs.GetString("AndroidSdkRoot", "");
+            if (string.IsNullOrEmpty(sdkPath))
             {
-                Debug.LogError("ndk path is empty! please config via menu path:Edit/Preference->External tools.");
+                Debug.LogError("sdk path is empty! please config via menu path:Edit/Preference->External tools.");
                 return false;
             }
-        }
 
-        string buildToolPath = sdkPath + "/build-tools/" + ANDROID_BUILD_TOOLS_VERSION + "/";
-        if (!Directory.Exists(buildToolPath))
-        {
-            Debug.LogError("Android Build Tools not found. Try to reconfig version on the top of AndroidBuilder.cs. In Unity2018, it can't be work if less than 26.0.2. current:" + buildToolPath);
-            return false;
-        }
+            string jdkPath = Path.GetFullPath("/Applications/Unity/Hub/Editor/2019.3.0f6/PlaybackEngines/AndroidPlayer/OpenJDK");//EditorPrefs.GetString("JdkPath", "");
+            if (string.IsNullOrEmpty(jdkPath))
+            {
+                Debug.LogError("jdk path is empty! please config via menu path:Edit/Preference->External tools.");
+                return false;
+            }
 
-        string platformJar = sdkPath + "/platforms/" + ANDROID_PLATFORM + "/android.jar";
-        if (!File.Exists(platformJar))
-        {
-            Debug.LogError("Android Platform not found. Try to reconfig version on the top of AndroidBuilder.cs. current:" + platformJar);
-            return false;
-        }
+            string ndkPath = Path.GetFullPath("/Users/carltonyu/Library/Android/ndk/android-ndk-r19");//EditorPrefs.GetString("AndroidNdkRootR16b", "");
+            if (string.IsNullOrEmpty(ndkPath))
+            {
+                ndkPath = EditorPrefs.GetString("AndroidNdkRoot", "");
+                if (string.IsNullOrEmpty(ndkPath))
+                {
+                    Debug.LogError("ndk path is empty! please config via menu path:Edit/Preference->External tools.");
+                    return false;
+                }
+            }
 
-        Debug.Log("Build Env is ready!");
-        Debug.Log("Build Options:");
-        Debug.Log("SDK PATH=" + sdkPath);
-        Debug.Log("JDK PATH=" + jdkPath);
-        Debug.Log("BUILD TOOLS PATH=" + buildToolPath);
-        Debug.Log("ANDROID PLATFORM=" + platformJar);
+            string buildToolPath = Path.GetFullPath(sdkPath + "/build-tools/" + ANDROID_BUILD_TOOLS_VERSION);
+            if (!Directory.Exists(buildToolPath))
+            {
+                Debug.LogError("Android Build Tools not found. Try to reconfig version on the top of AndroidBuilder.cs. In Unity2018, it can't be work if less than 26.0.2. current:" + buildToolPath);
+                return false;
+            }
+
+            string platformJar = Path.GetFullPath(sdkPath + "/platforms/" + ANDROID_PLATFORM + "/android.jar");
+            if (!File.Exists(platformJar))
+            {
+                Debug.LogError("Android Platform not found. Try to reconfig version on the top of AndroidBuilder.cs. current:" + platformJar);
+                return false;
+            }
+
+            Debug.Log("Build Env is ready!");
+            Debug.Log("Build Options:");
+            Debug.Log("SDK PATH=" + sdkPath);
+            Debug.Log("JDK PATH=" + jdkPath);
+            Debug.Log("BUILD TOOLS PATH=" + buildToolPath);
+            Debug.Log("ANDROID PLATFORM=" + platformJar);
+        }else if(Application.platform == RuntimePlatform.WindowsEditor){
+            string sdkPath = Path.GetFullPath("D:\\AndroidEnv\\SDK");//EditorPrefs.GetString("AndroidSdkRoot", "");
+            if (string.IsNullOrEmpty(sdkPath))
+            {
+                Debug.LogError("sdk path is empty! please config via menu path:Edit/Preference->External tools.");
+                return false;
+            }
+
+            string jdkPath = Path.GetFullPath("D:\\AndroidEnv\\OpenJDK");//EditorPrefs.GetString("JdkPath", "");
+            if (string.IsNullOrEmpty(jdkPath))
+            {
+                Debug.LogError("jdk path is empty! please config via menu path:Edit/Preference->External tools.");
+                return false;
+            }
+
+            string ndkPath = Path.GetFullPath("D:\\AndroidEnv\\NDK\\android-ndk-r19");//EditorPrefs.GetString("AndroidNdkRootR16b", "");
+            if (string.IsNullOrEmpty(ndkPath))
+            {
+                ndkPath = EditorPrefs.GetString("AndroidNdkRoot", "");
+                if (string.IsNullOrEmpty(ndkPath))
+                {
+                    Debug.LogError("ndk path is empty! please config via menu path:Edit/Preference->External tools.");
+                    return false;
+                }
+            }
+
+            string buildToolPath = sdkPath + "/build-tools/" + ANDROID_BUILD_TOOLS_VERSION + "/";
+            if (!Directory.Exists(buildToolPath))
+            {
+                Debug.LogError("Android Build Tools not found. Try to reconfig version on the top of AndroidBuilder.cs. In Unity2018, it can't be work if less than 26.0.2. current:" + buildToolPath);
+                return false;
+            }
+
+            string platformJar = sdkPath + "/platforms/" + ANDROID_PLATFORM + "/android.jar";
+            if (!File.Exists(platformJar))
+            {
+                Debug.LogError("Android Platform not found. Try to reconfig version on the top of AndroidBuilder.cs. current:" + platformJar);
+                return false;
+            }
+
+            Debug.Log("Build Env is ready!");
+            Debug.Log("Build Options:");
+            Debug.Log("SDK PATH=" + sdkPath);
+            Debug.Log("JDK PATH=" + jdkPath);
+            Debug.Log("BUILD TOOLS PATH=" + buildToolPath);
+            Debug.Log("ANDROID PLATFORM=" + platformJar);
+        }
+        
+        
         return true;
     }
 
@@ -164,12 +214,6 @@ public class AndroidBuilder : MonoBehaviour {
             return false;
         }
 
-        //copy the prebuild patch to the assets directory instead of downloading.
-        string zippedPatch1File = PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/AllAndroidPatchFiles_Version1.zip";
-        string zippedPatch12File = PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/AllAndroidPatchFiles_Version2.zip";
-        if (File.Exists(zippedPatch1File)) { FileUtil.CopyFileOrDirectory(zippedPatch1File, EXPORTED_ASSETS_PATH + "/AllAndroidPatchFiles_Version1.zip");}
-        if (File.Exists(zippedPatch12File)) { FileUtil.CopyFileOrDirectory(zippedPatch12File, EXPORTED_ASSETS_PATH + "/AllAndroidPatchFiles_Version2.zip");}
-        
         return true;
     }
 
@@ -183,21 +227,32 @@ public class AndroidBuilder : MonoBehaviour {
             Debug.LogError("UnityPlayerActivity.java not found or more than one.");
             return false;
         }
-        string javaEntranceFile = javaEntranceFiles[0];
-        string allJavaText = File.ReadAllText(javaEntranceFile);
-        if (allJavaText.IndexOf("bootstrap") > 0)
-        {
-            Debug.Log("UnityPlayerActivity.java already patched.");
-            return true;
+        string javaEntranceFilepath = Path.GetFullPath(javaEntranceFiles[0]);
+        string pluginEntranceFilepath = Path.GetFullPath(Path.Combine(Application.dataPath,"AndroidIl2cppPatchDemo/Plugins/Android/java/com/unity3d/player/UnityPlayerActivity.java"));
+        
+        if(File.Exists(pluginEntranceFilepath)){
+            if(File.Exists(javaEntranceFilepath)){
+                File.Delete(javaEntranceFilepath);
+            }
+            FileUtil.CopyFileOrDirectory(pluginEntranceFilepath, javaEntranceFilepath);
+            Debug.Log("javaEntranceFilepath:"+javaEntranceFilepath);
+        }else{
+            Debug.LogError("Plugin UnityPlayerActivity.java not found. path:"+pluginEntranceFilepath);
+            return false;
         }
-        allJavaText = allJavaText.Replace("import android.view.WindowManager;",
-            @"import android.view.WindowManager;
-import io.github.noodle1983.Boostrap;");
+        string manifestPath = Path.GetFullPath(MANIFEST_XML_PATH);
+        string pluginManifestPath = Path.GetFullPath(Path.Combine(Application.dataPath,"AndroidIl2cppPatchDemo/Plugins/Android/AndroidManifest.xml"));
+        if(File.Exists(pluginManifestPath)){
+            if(File.Exists(manifestPath)){
+                File.Delete(manifestPath);
+            }
+            FileUtil.CopyFileOrDirectory(pluginManifestPath, manifestPath);
+            Debug.Log("manifestPath:"+manifestPath);
+        }else{
+            Debug.LogError("Plugin Manifest.xml not found. path:"+pluginManifestPath);
+            return false;
+        }
 
-        allJavaText = allJavaText.Replace("mUnityPlayer = new UnityPlayer(this);",
-            @"Boostrap.InitNativeLibBeforeUnityPlay(getApplication().getApplicationContext().getFilesDir().getPath());
-        mUnityPlayer = new UnityPlayer(this);");
-        File.WriteAllText(javaEntranceFile, allJavaText);
         return true;
     }
 
@@ -205,9 +260,9 @@ import io.github.noodle1983.Boostrap;");
     [MenuItem("AndroidBuilder/Step 3: Generate Bin Patches", false, 103)]
     public static bool GenerateBinPatches()
     {
-        string assetBinDataPath = EXPORTED_ASSETS_PATH + "/bin/Data/";
-        string patchTopPath = PROJECT_DIR + "/AllAndroidPatchFiles/";
-        string assertBinDataPatchPath = patchTopPath + "/assets_bin_Data/";
+        string assetBinDataPath = Path.GetFullPath(EXPORTED_ASSETS_PATH + "/bin/Data/");
+        string patchTopPath = Path.GetFullPath(PROJECT_DIR + "/AllAndroidPatchFiles/");
+        string assertBinDataPatchPath = Path.GetFullPath(patchTopPath + "/assets_bin_Data/");
      
         if (Directory.Exists(patchTopPath)) { FileUtil.DeleteFileOrDirectory(patchTopPath); }
         Directory.CreateDirectory(assertBinDataPatchPath);
@@ -229,40 +284,70 @@ import io.github.noodle1983.Boostrap;");
             string pathInZipFile = specialPaths[1];
             string zipFileName = specialPaths[2];
 
-            string projectFullPath = BUILD_SCRIPTS_PATH + projectRelativePath;
+            string projectFullPath = Path.GetFullPath(BUILD_SCRIPTS_PATH + projectRelativePath);
             ZipHelper.ZipFile(projectFullPath, pathInZipFile, patchTopPath + zipFileName, 9);
         }
 
         string[] allAssetsBinDataFiles = Directory.GetFiles(assetBinDataPath, "*", SearchOption.AllDirectories);
         StringBuilder allZipCmds = new StringBuilder();
-        allZipCmds.AppendFormat("if not exist \"{0}\" (MD \"{0}\") \n", PROJECT_DIR + "/AllAndroidPatchFiles/");
-        allZipCmds.AppendFormat("if not exist \"{0}\" (MD \"{0}\") \n", PROJECT_DIR + "/AllAndroidPatchFiles/assets_bin_Data/");
-        foreach (string apk_file in allAssetsBinDataFiles)
-        {
-            string relativePathHeader = "assets/bin/Data/";
-            int relativePathStart = apk_file.IndexOf(relativePathHeader);
-            string filenameInZip = apk_file.Substring(relativePathStart);                                                //file: assets/bin/Data/xxx/xxx
-            string relativePath = apk_file.Substring(relativePathStart + relativePathHeader.Length).Replace('\\', '/'); //file: xxx/xxx
-            string zipFileName = relativePath.Replace("/", "__").Replace("\\", "__") + ".bin";                                     //file: xxx__xxx.bin
-
-            allZipCmds.AppendFormat("cd {0} && {1} -8 \"{2}\" \"{3}\"\n", BUILD_SCRIPTS_PATH, ZIP_PATH, PROJECT_DIR + "/AllAndroidPatchFiles/assets_bin_Data/" + zipFileName, filenameInZip);
-        }
-        string zippedPatchFile = PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/AllAndroidPatchFiles_Version1.zip";
-        if (File.Exists(zippedPatchFile)) { FileUtil.DeleteFileOrDirectory(zippedPatchFile);  }
-        allZipCmds.AppendFormat("sleep 1 && cd {0} && {1} -9 -r \"{2}\" \"{3}\"\n", patchTopPath, ZIP_PATH, zippedPatchFile, "*");
-        allZipCmds.AppendFormat("explorer.exe {0} \n\n", (PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/").Replace("//", "/").Replace("/", "\\"));
-        allZipCmds.AppendFormat("@echo on\n\n"); //explorer as the last line wont return success, so...
-
-        if (allZipCmds.Length > 0)
-        {
-            string zipPatchesFile = BUILD_SCRIPTS_PATH + "/" + "zip_patches.bat";
-            File.WriteAllText(zipPatchesFile, allZipCmds.ToString());
-            if (!Exec(zipPatchesFile, zipPatchesFile))
+        if(Application.platform == RuntimePlatform.WindowsEditor){
+            allZipCmds.AppendFormat("if not exist \"{0}\" (MD \"{0}\") \n", Path.GetFullPath(PROJECT_DIR + "/AllAndroidPatchFiles/"));
+            allZipCmds.AppendFormat("if not exist \"{0}\" (MD \"{0}\") \n", Path.GetFullPath(PROJECT_DIR + "/AllAndroidPatchFiles/assets_bin_Data/"));
+            foreach (string apk_file in allAssetsBinDataFiles)
             {
-                Debug.LogError("exec failed:" + zipPatchesFile);
-                return false;
+                string relativePathHeader = "assets/bin/Data/";
+                int relativePathStart = apk_file.IndexOf(relativePathHeader);
+                string filenameInZip = apk_file.Substring(relativePathStart);                                                //file: assets/bin/Data/xxx/xxx
+                string relativePath = apk_file.Substring(relativePathStart + relativePathHeader.Length).Replace('\\', '/'); //file: xxx/xxx
+                string zipFileName = relativePath.Replace("/", "__").Replace("\\", "__") + ".bin";                                     //file: xxx__xxx.bin
+
+                allZipCmds.AppendFormat("cd {0} && {1} -8 \"{2}\" \"{3}\"\n", BUILD_SCRIPTS_PATH, ZIP_PATH, Path.GetFullPath(Path.Combine(assertBinDataPatchPath,zipFileName)), filenameInZip);
+            }
+            string zippedPatchFile = PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/AllAndroidPatchFiles_Version1.zip";
+            if (File.Exists(zippedPatchFile)) { FileUtil.DeleteFileOrDirectory(zippedPatchFile);  }
+            allZipCmds.AppendFormat("sleep 1 && cd {0} && {1} -9 -r \"{2}\" \"{3}\"\n", patchTopPath, ZIP_PATH, zippedPatchFile, "*");
+            allZipCmds.AppendFormat("explorer.exe {0} \n\n", (PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/").Replace("//", "/").Replace("/", "\\"));
+            allZipCmds.AppendFormat("@echo on\n\n"); //explorer as the last line wont return success, so...
+
+            if (allZipCmds.Length > 0)
+            {
+                string zipPatchesFile = BUILD_SCRIPTS_PATH + "/" + "zip_patches.bat";
+                File.WriteAllText(zipPatchesFile, allZipCmds.ToString());
+                if (!Exec(zipPatchesFile, zipPatchesFile))
+                {
+                    Debug.LogError("exec failed:" + zipPatchesFile);
+                    return false;
+                }
+            }
+        }else{
+            ZIP_PATH = "zip";
+            foreach (string apk_file in allAssetsBinDataFiles)
+            {
+                string relativePathHeader = "assets/bin/Data/";
+                int relativePathStart = apk_file.IndexOf(relativePathHeader);
+                string filenameInZip = apk_file.Substring(relativePathStart);                                                //file: assets/bin/Data/xxx/xxx
+                string relativePath = apk_file.Substring(relativePathStart + relativePathHeader.Length).Replace('\\', '/'); //file: xxx/xxx
+                string zipFileName = relativePath.Replace("/", "__").Replace("\\", "__") + ".bin";                                     //file: xxx__xxx.bin
+
+                allZipCmds.AppendFormat("cd {0}\n {1} -8 \"{2}\" \"{3}\"\n", Path.GetFullPath(BUILD_SCRIPTS_PATH), ZIP_PATH, Path.GetFullPath(Path.Combine(assertBinDataPatchPath,zipFileName)), filenameInZip);
+            }
+            string zippedPatchFile = Path.GetFullPath(PROJECT_DIR + "/Assets/AndroidIl2cppPatchDemo/PrebuiltPatches/AllAndroidPatchFiles_Version1.zip");
+            if (File.Exists(zippedPatchFile)) { FileUtil.DeleteFileOrDirectory(zippedPatchFile);  }
+            allZipCmds.AppendFormat("sleep 1\ncd {0}\n{1} -9 -r \"{2}\" .\n", patchTopPath, ZIP_PATH, zippedPatchFile);
+            
+
+            if (allZipCmds.Length > 0)
+            {
+                string zipPatchesFile = BUILD_SCRIPTS_PATH + "/" + "zip_patches.sh";
+                File.WriteAllText(zipPatchesFile, allZipCmds.ToString());
+                if (!Exec(zipPatchesFile, zipPatchesFile))
+                {
+                    Debug.LogError("exec failed:" + zipPatchesFile);
+                    return false;
+                }
             }
         }
+        
         return true;
     }
 
@@ -317,13 +402,13 @@ import io.github.noodle1983.Boostrap;");
         if (Directory.Exists(outputLibPath)) { FileUtil.DeleteFileOrDirectory(outputLibPath); }
         Directory.CreateDirectory(outputLibPath);
         FileUtil.ReplaceDirectory(SO_LIB_PATH + "/armeabi-v7a", outputLibPath + "/armeabi-v7a");
-        FileUtil.ReplaceDirectory(SO_LIB_PATH + "/x86", outputLibPath + "/x86");
+        // FileUtil.ReplaceDirectory(SO_LIB_PATH + "/x86", outputLibPath + "/x86");
 #if UNITY_2018 || UNITY_2019
         FileUtil.ReplaceDirectory(SO_LIB_PATH + "/arm64-v8a", outputLibPath + "/arm64-v8a");
         FileUtil.DeleteFileOrDirectory(outputLibPath + "/arm64-v8a/Data");
 #endif
         FileUtil.DeleteFileOrDirectory(outputLibPath + "/armeabi-v7a/Data");
-        FileUtil.DeleteFileOrDirectory(outputLibPath + "/x86/Data");
+        // FileUtil.DeleteFileOrDirectory(outputLibPath + "/x86/Data");
         var debug_files = Directory.GetFiles(outputLibPath, "*.*", SearchOption.AllDirectories).Where(s => s.EndsWith(".debug") || s.EndsWith(".map") || s.EndsWith(".sym"));
         foreach (string file in debug_files) { File.Delete(file); }
 

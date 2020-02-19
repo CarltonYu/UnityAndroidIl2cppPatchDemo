@@ -48,6 +48,9 @@ public class VersionSettor : MonoBehaviour {
 
         //2. extract files from zip
         string zipPatchFile = string.Format(ZIP_PATCH_FORMAT, updateVersion);
+
+        Debug.Log("======== zipPatchFile:"+zipPatchFile);
+        Debug.Log("======== runtimePatchPath:"+runtimePatchPath);
         WWW zipPatchFileReader = new WWW(zipPatchFile);
         while (!zipPatchFileReader.isDone) { yield return null; }
         if (zipPatchFileReader.error != null)
