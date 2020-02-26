@@ -28,7 +28,7 @@ public class CheckVersion {
     public static String unzip_dir_format = "%s/Version%s";
     public static String sozip_path_format = "%s/Version%s/lib_%s_libil2cpp.so.zip";
     public static String cache_format = "%s/il2cpp";
-    public static void CheckVersion(String cpu,final Handler handler,final String local_dir,final String local_unzip_root_dir){
+    public static void CheckVersion(String cpu,final Handler handler,final String local_dir,final String local_unzip_root_dir,int currentVersion){
         cpuTarget = cpu;
         new Thread(new Runnable() {
             @Override
@@ -51,14 +51,17 @@ public class CheckVersion {
                         String result = is2String(inputStream);//将流转换为字符串。
 //                        http://jixin.xdapp.com/patch/AllAndroidPatchFiles_Version0.zip
 
-//                        Message msg = new Message();
-//                        msg.what = StartActivity.Handler_CheckVersion;
-//                        msg.obj = String.format(base_download_format,result);
-//                        handler.sendMessage(msg);
-                        String download_url = String.format(base_download_format,cpuTarget,result);
-                        String local_path = String.format(local_path_format,local_dir,result);
-                        Log.e("kwwl","result============="+result+"\ndownload_url:"+download_url+"\nlocal_path:"+local_path);
-                        DownLoadZip(handler,download_url,local_path,local_unzip_root_dir,result);
+                        int patchversion = Integer.parseInt(result);
+                        Log.e(TAG,"===== currentVersion:"+currentVersion+"   patchversion:"+patchversion);
+                        if(patchversion>currentVersion){
+                            String download_url = String.format(base_download_format,cpuTarget,result);
+                            String local_path = String.format(local_path_format,local_dir,result);
+                            Log.e("kwwl","result============="+result+"\ndownload_url:"+download_url+"\nlocal_path:"+local_path);
+                            DownLoadZip(handler,download_url,local_path,local_unzip_root_dir,result);
+                        }else{
+                            handler.sendEmptyMessage(StartActivity.Handler_NotRequiredUsePatch);
+                        }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -117,7 +120,7 @@ public class CheckVersion {
         Log.e(TAG,"====== cacheDir:"+cacheDir);
         File cachefile = new File(cacheDir);
         if(cachefile.exists()){
-            cachefile.delete();
+            removeDir(cachefile);
         }
 
         Message msg = new Message();
@@ -152,5 +155,20 @@ public class CheckVersion {
         }
         //读取所有的数据后，赋值给 response
         return stringBuilder.toString().trim();
+    }
+
+    public static void removeDir(File dir)
+    {
+        File[] files = dir.listFiles();
+
+        for(int x=0; x<files.length ; x++) {
+            if (files[x].isDirectory())        // 避开隐藏的文件可以 && 上 !file[x].isHidden();
+            {
+                removeDir(files[x]);
+            } else {
+                Log.e(TAG,files[x].toString() + ".....::" + files[x].delete());
+            }
+        }
+        dir.delete();
     }
 }

@@ -3,8 +3,10 @@ package com.jixin;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +14,8 @@ import android.os.Message;
 import android.util.Log;
 
 import com.unity3d.player.UnityPlayerActivity;
+
+import java.io.File;
 
 import io.github.noodle1983.Boostrap;
 
@@ -22,6 +26,7 @@ public class StartActivity extends Activity {
     public static final int Handler_CheckVersion = 1000;
     public static final int Handler_DownloadFinish = 1001;
     public static final int Handler_UnzipFinish = 1002;
+    public static final int Handler_NotRequiredUsePatch = 1003;
     Handler mainHandler = new Handler(new Handler.Callback() {
 
         @Override
@@ -33,6 +38,9 @@ public class StartActivity extends Activity {
                     break;
                 case Handler_UnzipFinish:
                     UnzipFinish((String) msg.obj);
+                    break;
+                case Handler_NotRequiredUsePatch:
+                    NotRequiredUsePatch();
                     break;
                 default:
                     break;
@@ -90,7 +98,17 @@ public class StartActivity extends Activity {
             startGame();
         }
     }
-
+    public static synchronized int getVersionCode(Context context) {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(
+                    context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
     public void startGame(){
         String filepath = getApplication().getApplicationContext().getFilesDir().getPath();
         Log.e(TAG,"======= InitNativeLibBeforeUnityPlay filepath:"+filepath);
@@ -102,25 +120,28 @@ public class StartActivity extends Activity {
 //        Log.e(TAG,"======= local_dir:"+local_dir);
         String local_unzip_root_dir = this.getExternalFilesDir("").getAbsolutePath();
 //        Log.e(TAG,"======= local_unzip_root_dir:"+local_unzip_root_dir);
-        CheckVersion.CheckVersion(cpu,mainHandler,local_dir,local_unzip_root_dir);
+
+        CheckVersion.CheckVersion(cpu,mainHandler,local_dir,local_unzip_root_dir,getVersionCode(this));
+    }
+
+    public void NotRequiredUsePatch(){
+        Log.e(TAG,"====== NotRequiredUsePatch");
+        String cacheDir = this.getExternalFilesDir("il2cpp").getAbsolutePath();
+        File cachefile = new File(cacheDir);
+        if(cachefile.exists()){
+            Log.e(TAG,"====== delete cacheDir:"+cacheDir);
+            CheckVersion.removeDir(cachefile);
+        }
+        Boostrap.ReInitNativeLibBeforeUnityPlay(false);
+        initUnity();
     }
 
     public void UnzipFinish(String version){
 
         String filepath = getApplication().getApplicationContext().getFilesDir().getPath();
         Log.e(TAG,"======= ReInitNativeLibBeforeUnityPlay filepath:"+filepath);
-        Boostrap.ReInitNativeLibBeforeUnityPlay();
+        Boostrap.ReInitNativeLibBeforeUnityPlay(true);
         initUnity();
-//        String local_dir = this.getExternalFilesDir("download").getAbsolutePath();
-//        Log.e(TAG,"======= local_dir:"+local_dir);
-//        String local_unzip_root_dir = this.getExternalFilesDir("").getAbsolutePath();
-//        Log.e(TAG,"======= local_unzip_root_dir:"+local_unzip_root_dir);
-//        String local_path = String.format(CheckVersion.local_path_format,local_dir,version);
-//        try {
-//            CheckVersion.UnZipFile(mainHandler,local_path,local_unzip_root_dir,version);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
 
     }
 
