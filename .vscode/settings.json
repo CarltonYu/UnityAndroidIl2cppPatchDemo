@@ -52,5 +52,10 @@
         "ProjectSettings/":true,
         "temp/":true,
         "Temp/":true
+    },
+    "files.associations": {
+        "iosfwd": "cpp",
+        "filesystem": "cpp",
+        "__locale": "cpp"
     }
 }

@@ -11,3 +11,4 @@ AllAndroidPatchFiles*
 UnityPackageManager
 *.apk
 AndroidKeystore
+Assets/AndroidIl2cppPatchDemo/PrebuiltPatches

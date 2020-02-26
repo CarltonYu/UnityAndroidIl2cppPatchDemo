@@ -255,6 +255,23 @@ public class AndroidBuilder : MonoBehaviour {
             return false;
         }
     }
+    [MenuItem("AndroidBuilder/Export All", false, 104)]
+    public static bool ExportAll(){
+        if(Export0()==false){
+            return false;
+        }
+        if(Export1()==false){
+            return false;
+        }
+        if(Export2()==false){
+            return false;
+        }
+        if(Export3()==false){
+            return false;
+        }
+        return true;
+    }
+
     public static bool ExportGradleProject(AndroidExportConfig config)
     {
         //build settings
@@ -269,7 +286,7 @@ public class AndroidBuilder : MonoBehaviour {
 #if UNITY_2018 || UNITY_2019
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.All;
 #endif
-
+        PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.iOS,config.ScriptingDefineSymbols); 
         //export project
         string error_msg = string.Empty;
         string[] levels = new string[] { string.Format("Assets/AndroidIl2cppPatchDemo/Scene/java{0}.unity",config.exportversion) };
@@ -344,22 +361,24 @@ public class AndroidBuilder : MonoBehaviour {
         if (Directory.Exists(patchTopPath)) { FileUtil.DeleteFileOrDirectory(patchTopPath); }
         Directory.CreateDirectory(assertBinDataPatchPath);
 
-        string[][] soPatchFile =
+        string[] soPatchFile =
         {
                 // path_in_android_project, filename inside zip, zip file anme
-                new string[3]{ "/"+ config.SO_DIR_NAME + "/armeabi-v7a/libil2cpp.so", "libil2cpp.so.new", "lib_armeabi-v7a_libil2cpp.so.zip" },
+                "armeabi-v7a",
+                // new string[3]{ "/"+ config.SO_DIR_NAME + "/armeabi-v7a/libil2cpp.so", "libil2cpp.so.new", "lib_armeabi-v7a_libil2cpp.so.zip" },
                 // new string[3]{ "/"+ SO_DIR_NAME + "/x86/libil2cpp.so", "libil2cpp.so.new", "lib_x86_libil2cpp.so.zip" },
-#if UNITY_2018 || UNITY_2019              
-                new string[3]{ "/"+ config.SO_DIR_NAME + "/arm64-v8a/libil2cpp.so", "libil2cpp.so.new", "lib_arm64-v8a_libil2cpp.so.zip" },
+#if UNITY_2018 || UNITY_2019  
+                "arm64-v8a",            
+                // new string[3]{ "/"+ config.SO_DIR_NAME + "/arm64-v8a/libil2cpp.so", "libil2cpp.so.new", "lib_arm64-v8a_libil2cpp.so.zip" },
 #endif
         };
 
         for (int i = 0; i < soPatchFile.Length; i++)
         {
-            string[] specialPaths = soPatchFile[i];
-            string projectRelativePath = specialPaths[0];
-            string pathInZipFile = specialPaths[1];
-            string zipFileName = specialPaths[2];
+            string patchTarget = soPatchFile[i];
+            string projectRelativePath = "/"+ config.SO_DIR_NAME + "/"+patchTarget+"/libil2cpp.so";
+            string pathInZipFile = "libil2cpp.so.new";
+            string zipFileName = "lib_"+patchTarget+"_libil2cpp.so.zip";
 
             string projectFullPath = config.unityLibraryMainPath + projectRelativePath;
             ZipHelper.ZipFile(projectFullPath, pathInZipFile, patchTopPath + zipFileName, 9);
@@ -399,6 +418,7 @@ public class AndroidBuilder : MonoBehaviour {
             }
         }else{
             ZIP_PATH = "zip";
+            allZipCmds.AppendFormat("cd {0}\n",Path.GetFullPath(config.unityLibraryMainPath));
             foreach (string apk_file in allAssetsBinDataFiles)
             {
                 string relativePathHeader = "assets/bin/Data/";
@@ -407,12 +427,21 @@ public class AndroidBuilder : MonoBehaviour {
                 string relativePath = apk_file.Substring(relativePathStart + relativePathHeader.Length).Replace('\\', '/'); //file: xxx/xxx
                 string zipFileName = relativePath.Replace("/", "__").Replace("\\", "__") + ".bin";                                     //file: xxx__xxx.bin
 
-                allZipCmds.AppendFormat("cd {0}\n{1} -8 \"{2}\" \"{3}\"\n", Path.GetFullPath(config.unityLibraryMainPath), ZIP_PATH, Path.GetFullPath(Path.Combine(assertBinDataPatchPath,zipFileName)), filenameInZip);
+                allZipCmds.AppendFormat("{0} -8 \"{1}\" \"{2}\"\n",  ZIP_PATH, Path.GetFullPath(Path.Combine(assertBinDataPatchPath,zipFileName)), filenameInZip);
             }
-            string zippedPatchFile = Path.GetFullPath(Path.Combine( Application.dataPath , string.Format("AndroidIl2cppPatchDemo/PrebuiltPatches/AllAndroidPatchFiles_Version{0}.zip",config.exportversion)));
-            Debug.Log("zippedPatchFile:"+zippedPatchFile);
-            if (File.Exists(zippedPatchFile)) { FileUtil.DeleteFileOrDirectory(zippedPatchFile);  }
-            allZipCmds.AppendFormat("sleep 1\ncd {0}\n{1} -9 -r \"{2}\" .\n", patchTopPath, ZIP_PATH, zippedPatchFile);
+            for (int i = 0; i < soPatchFile.Length; i++){
+                string patchTarget = soPatchFile[i];
+                string zipFileName = "lib_"+patchTarget+"_libil2cpp.so.zip";
+                allZipCmds.AppendFormat("cd {0}\n",patchTopPath);
+                allZipCmds.AppendFormat("mkdir {0}\n",patchTarget);
+                allZipCmds.AppendFormat("cp -r {0} {1}\n",assertBinDataPatchPath,patchTarget+"/assets_bin_Data/");
+                allZipCmds.AppendFormat("cp {0} {1}\n",zipFileName,patchTarget);
+                string zippedPatchFile = Path.GetFullPath(Path.Combine( Application.dataPath , string.Format("AndroidIl2cppPatchDemo/PrebuiltPatches/Patch_{0}_{1}.zip",patchTarget,config.exportversion)));
+                Debug.Log("zippedPatchFile:"+zippedPatchFile);
+                if (File.Exists(zippedPatchFile)) { FileUtil.DeleteFileOrDirectory(zippedPatchFile);  }
+                allZipCmds.AppendFormat("sleep 1\ncd {0}\n{1} -8 -r \"{2}\" .\n", Path.GetFullPath(Path.Combine(patchTopPath,patchTarget)), ZIP_PATH, zippedPatchFile);
+            }
+            
 
             if (allZipCmds.Length > 0)
             {

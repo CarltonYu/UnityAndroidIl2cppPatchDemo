@@ -1,5 +1,6 @@
 package com.jixin;
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,8 +11,6 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-
-import com.unity3d.player.UnityPlayer;
 
 /**
  * Created by carlton on 2018/1/9.
@@ -35,15 +34,15 @@ public class PermissionUtil {
     final private static int REQUEST_CODE_ASK_PERMISSIONS_AUDIO = 456;
 
     public static PermissionUtilListener permissionUtilListener = null;
-
+    public static Activity currentActivity;
     public static void initListener(PermissionUtilListener listener) {
         permissionUtilListener = listener;
     }
 
     public static int GetPermissionState(String permissionName) {
-        int hasWriteContactsPermission = ContextCompat.checkSelfPermission(UnityPlayer.currentActivity, permissionName);
+        int hasWriteContactsPermission = ContextCompat.checkSelfPermission(currentActivity, permissionName);
         if (hasWriteContactsPermission != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(UnityPlayer.currentActivity, permissionName)) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(currentActivity, permissionName)) {
                 return PERMISSIONS_STATE_DONTASK;
             }
             return PERMISSIONS_STATE_CANCEL;
@@ -53,7 +52,7 @@ public class PermissionUtil {
 
     // 请求开启权限
     public static void RequestPermissions(String permissionName, int requestCode) {
-        ActivityCompat.requestPermissions(UnityPlayer.currentActivity,
+        ActivityCompat.requestPermissions(currentActivity,
                 new String[]{permissionName},
                 requestCode);
     }
@@ -63,7 +62,7 @@ public class PermissionUtil {
         if (Build.VERSION.SDK_INT < 23) {
             return true;
         }
-        Context context = UnityPlayer.currentActivity.getApplicationContext();
+        Context context = currentActivity.getApplicationContext();
         return context.checkCallingOrSelfPermission(permissionStr) == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -175,7 +174,7 @@ public class PermissionUtil {
         new android.os.Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                new AlertDialog.Builder(UnityPlayer.currentActivity)
+                new AlertDialog.Builder(currentActivity)
                         .setCancelable(false)
                         .setTitle(title)
                         .setMessage(message)
@@ -190,7 +189,7 @@ public class PermissionUtil {
         new android.os.Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                new AlertDialog.Builder(UnityPlayer.currentActivity)
+                new AlertDialog.Builder(currentActivity)
                         .setCancelable(false)
                         .setTitle(title)
                         .setMessage(message)
@@ -207,7 +206,7 @@ public class PermissionUtil {
             @Override
             public void run() {
                 Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                UnityPlayer.currentActivity.startActivity(intent);
+                currentActivity.startActivity(intent);
             }
         });
     }
@@ -223,7 +222,7 @@ public class PermissionUtil {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (force) {
-                        ActivityCompat.requestPermissions(UnityPlayer.currentActivity,
+                        ActivityCompat.requestPermissions(currentActivity,
                                 new String[]{Manifest.permission.CAMERA},
                                 REQUEST_CODE_ASK_PERMISSIONS_CAMERA);
                     } else
@@ -245,7 +244,7 @@ public class PermissionUtil {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (force) {
-                        ActivityCompat.requestPermissions(UnityPlayer.currentActivity,
+                        ActivityCompat.requestPermissions(currentActivity,
                                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                 REQUEST_CODE_ASK_PERMISSIONS_STORAGE);
                     } else
@@ -267,7 +266,7 @@ public class PermissionUtil {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (force) {
-                        ActivityCompat.requestPermissions(UnityPlayer.currentActivity,
+                        ActivityCompat.requestPermissions(currentActivity,
                                 new String[]{Manifest.permission.GET_ACCOUNTS},
                                 REQUEST_CODE_ASK_PERMISSIONS_ACCOUNT);
                     } else
@@ -289,7 +288,7 @@ public class PermissionUtil {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if (force) {
-                        ActivityCompat.requestPermissions(UnityPlayer.currentActivity,
+                        ActivityCompat.requestPermissions(currentActivity,
                                 new String[]{Manifest.permission.RECORD_AUDIO},
                                 REQUEST_CODE_ASK_PERMISSIONS_AUDIO);
                     } else

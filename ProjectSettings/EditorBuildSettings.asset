@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/AndroidIl2cppPatchDemo/Scene/0.unity
-    guid: ce9a24f39e901664fb07dac737fa43a8
+    path: Assets/AndroidIl2cppPatchDemo/Scene/java0.unity
+    guid: 1261f13e8aab6417c8a5263a47cbb9b9
   m_configObjects: {}

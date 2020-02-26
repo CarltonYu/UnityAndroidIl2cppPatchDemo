@@ -19,8 +19,10 @@ public class AndroidExportConfig
     public string unityLibrary_MANIFEST_XML_PATH;
     public string unityLibrary_JAVA_OBJ_PATH;
     public string UNITY_PROJECT_DIR;
+    public string ScriptingDefineSymbols;
     public AndroidExportConfig(int version){
         exportversion = version;
+        ScriptingDefineSymbols = "TEST"+version;
         exportname = "AndroidGradleProject_v"+version;
         UNITY_PROJECT_DIR = Application.dataPath.Substring(0, Application.dataPath.Length - 6);
         android_export_path = Path.GetFullPath(Path.Combine(UNITY_PROJECT_DIR,exportname));
